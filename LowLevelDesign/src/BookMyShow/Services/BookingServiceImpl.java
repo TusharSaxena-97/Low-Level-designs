@@ -18,7 +18,7 @@ public class BookingServiceImpl extends BookingService{
 
     @Override
     public boolean createBooking(Show show, List<Seat> seat , User user) {
-        if( lockManager.tryLock( show , seat ))
+        if( lockManager.tryLock( show , seat , user ))
         {
             paymentService.makePayment();
             double cost = new Double(0);

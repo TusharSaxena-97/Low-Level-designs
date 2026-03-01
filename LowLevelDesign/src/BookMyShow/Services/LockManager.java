@@ -8,7 +8,7 @@ import java.util.concurrent.*;
 
 // Singleton Class
 public class LockManager {
-    ConcurrentMap<String,LocalDateTime> mp = new ConcurrentHashMap<>();
+    ConcurrentMap<String,TimeUser> mp = new ConcurrentHashMap<>();
     private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
 
     public LockManager() {
@@ -20,22 +20,40 @@ public class LockManager {
     }
 
     private void clean() {
-        mp.entrySet().removeIf( o -> (o.getValue().isBefore(LocalDateTime.now())));
+        mp.entrySet().removeIf( o -> (o.getValue().getTime().isBefore(LocalDateTime.now())));
     }
 
-    public boolean tryLock( Show show, List<Seat> seat )
-    {
-        LocalDateTime now_time = LocalDateTime.now();
+    public boolean tryLock(Show show, List<Seat> seats, User user) {
 
-        for( Seat s : seat ) {
-            String key = Integer.toString(show.getId()) + "_" +s.getNumber();
-            if(mp.containsKey(key) && mp.get(key).isAfter(now_time) )
-                return false;
+        LocalDateTime now = LocalDateTime.now();
+
+        // First check if all seats are lockable
+        for (Seat s : seats) {
+
+            String key = show.getId() + "_" + s.getNumber();
+            TimeUser existingLock = mp.get(key);
+
+            if (existingLock != null) {
+
+                // If locked by same user and not expired → allow
+                if (existingLock.getUser().equals(user) &&
+                        existingLock.getTime().isAfter(now)) {
+                    continue;
+                }
+
+                // If locked by other user and not expired → fail
+                if (existingLock.getTime().isAfter(now)) {
+                    return false;
+                }
+            }
         }
 
-        for( Seat s : seat ) {
-            String key = Integer.toString(show.getId()) + "_" + s.getNumber();
-            mp.put( key , show.getEndTime() );
+        // Lock seats (5 minute lock example)
+        LocalDateTime lockExpiry = now.plusMinutes(10);
+
+        for (Seat s : seats) {
+            String key = show.getId() + "_" + s.getNumber();
+            mp.put(key, new TimeUser( lockExpiry , user));
         }
 
         return true;
@@ -43,25 +61,26 @@ public class LockManager {
 
     public void unLock(Show show, List<Seat> seat )
     {
-        for( Seat s : seat){
+        for( Seat s : seat)
+        {
             String key = Integer.toString(show.getId()) + "_" + s.getNumber();
-            if (mp.containsKey(key) && mp.get(key).isAfter(LocalDateTime.now()))
+            if (mp.containsKey(key) && mp.get(key).getTime().isAfter(LocalDateTime.now()))
                 mp.remove(key);
         }
     }
 }
 
-class SeatTime{
-    private Set<Seat> seats;
-    private LocalDateTime time;
-    public SeatTime(Set<Seat> seats, LocalDateTime time) {
-        this.seats = seats;
+class TimeUser{
+    private final User user;
+    private final LocalDateTime time;
+    public TimeUser(LocalDateTime time, User user) {
         this.time = time;
-    }
-    public Set<Seat> getSeats() {
-        return seats;
+        this.user = user;
     }
     public LocalDateTime getTime() {
         return time;
+    }
+    public User getUser() {
+        return user;
     }
 }
