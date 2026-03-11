@@ -2,17 +2,19 @@ package Logger.LoggerService;
 
 import Logger.Entities.*;
 import Logger.Handlers.*;
-import NotificationSystem.Subscriber.Logger;
+import Logger.QueueService.QueueService;
+import Logger.WorkerService.Worker;
 
 public class LoggerService {
     private static volatile LoggerService instance;
-    ILoggerHandler handler;
+
+    QueueService queueService;
     MessageRepository messageRepository;
-    private LoggerService(String FilePath)
+    private LoggerService(String Filepath )
     {
-        ILoggerHandler.logDestination = new FileLogOutput(FilePath);
-        messageRepository = new MessageRepository();
-        handler = new InfoHandler(new WarningHandler(new ErrorHandler(new NullLoggerHandler()) ) );
+        new Worker(Filepath);
+        messageRepository = MessageRepository.getInstance();
+        queueService = QueueService.getInstance();
     }
     public static LoggerService getinstance(String FilePath)
     {
@@ -27,12 +29,6 @@ public class LoggerService {
         return instance;
     }
 
-    public static LoggerService getinstance( )
-    {
-        if(instance == null )
-            System.out.println("FilePath not yet set - up");
-        return instance;
-    }
 
     public void Info(String text){
         Log( text , MessageStatus.Info);
@@ -48,10 +44,8 @@ public class LoggerService {
 
     private void Log(String text , MessageStatus status)
     {
-        Message message = messageRepository.createAddMessage(text,status);
-        handler.Log(message);
+        queueService.addToQueue( messageRepository.createAddMessage( text , status) );
     }
-
     public void setFilePath(String FilePath)
     {
         ILoggerHandler.logDestination = new FileLogOutput(FilePath);
