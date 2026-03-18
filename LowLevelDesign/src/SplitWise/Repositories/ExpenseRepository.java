@@ -1,0 +1,28 @@
+package SplitWise.Repositories;
+
+import SplitWise.Entities.Expense;
+import SplitWise.Entities.Group;
+
+import java.util.*;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+
+public class ExpenseRepository {
+    List<Expense> expenses = new ArrayList<>();
+
+    public void AddExpense(Expense expense)
+    {
+       expenses.add( expense );
+    }
+
+    public List<Expense> getByGroupId( Group group )
+    {
+        return expenses.stream().filter( o -> o.equals(group)).collect(Collectors.toList());
+    }
+
+    public void DeleteExpense( Expense expense )
+    {
+        Predicate<Expense> p = ex -> ex.equals(expense);
+        expenses.removeIf( p );
+    }
+}
