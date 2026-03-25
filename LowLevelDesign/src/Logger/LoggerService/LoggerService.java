@@ -7,7 +7,6 @@ import Logger.WorkerService.Worker;
 
 public class LoggerService {
     private static volatile LoggerService instance;
-
     QueueService queueService;
     MessageRepository messageRepository;
     private LoggerService(String Filepath )

@@ -72,4 +72,18 @@ public class Group {
     public void setBalanceSheet(BalanceSheet balanceSheet) {
         this.balanceSheet = balanceSheet;
     }
+
+    public void UpdateBalance(User paidBy, List<Split> splits) {
+        this.getBalanceSheet().updateBalance(paidBy,splits);
+        update();
+    }
+
+    public void SettleUp(User user1, User user2) {
+        this.getBalanceSheet().SettleBalance(user1 , user2);
+    }
+
+    public void update()
+    {
+        // Logic to send Notifications to all the users
+    }
 }

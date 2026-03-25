@@ -20,9 +20,9 @@ public class ExpenseRepository {
         return expenses.stream().filter( o -> o.equals(group)).collect(Collectors.toList());
     }
 
-    public void DeleteExpense( Expense expense )
+    public void DeleteExpense( int expenseId )
     {
-        Predicate<Expense> p = ex -> ex.equals(expense);
+        Predicate<Expense> p = ex -> ex.getExpenseId() == expenseId;
         expenses.removeIf( p );
     }
 }

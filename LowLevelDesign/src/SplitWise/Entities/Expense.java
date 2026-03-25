@@ -14,6 +14,7 @@ public class Expense {
     private User paidBy;
     private List<User> splitAmong;
     private SplitStrategy splitStrategy;
+    private List<Split> splits;
     private Group group;
 
     public Expense(ExpenseBuilder eb)
@@ -34,6 +35,16 @@ public class Expense {
 
     public int getExpenseId() {
         return expenseId;
+    }
+
+    public void setSplit(List<Split> splits)
+    {
+        this.splits = splits;
+    }
+
+    public List<Split> getSplits( )
+    {
+        return splits;
     }
 
     public void setExpenseId(int expenseId) {
