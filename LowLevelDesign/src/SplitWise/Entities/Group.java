@@ -8,6 +8,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class Group {
     private static AtomicInteger nextId = new AtomicInteger(1);
     private int groupId;
+    private String Name;
     private String description;
     private String image;
     private List<User> members;
@@ -18,11 +19,17 @@ public class Group {
     {
         this.groupId = nextId.incrementAndGet();
 
-        this.description = groupBuilder.description;;
+        this.description = groupBuilder.description;
+        this.Name = groupBuilder.Name;
         this.image = groupBuilder.image;
         this.members = new ArrayList<>( groupBuilder.members);
         this.balanceSheet = groupBuilder.balanceSheet;
         this.expenseList = new ArrayList<>( groupBuilder.expenseList );
+    }
+
+    public String getName( )
+    {
+        return this.Name;
     }
 
     public int getGroupId() {
@@ -82,8 +89,23 @@ public class Group {
         this.getBalanceSheet().SettleBalance(user1 , user2);
     }
 
+    public void AddTransaction( User paidBy , User paidTo , double Amount )
+    {
+        balanceSheet.AddTransaction( paidBy , paidTo , Amount );
+    }
+
     public void update()
     {
         // Logic to send Notifications to all the users
+    }
+
+    public void PrintBalances()
+    {
+        for( User x : members ) {
+           System.out.print(x.getName());
+           System.out.print("==================");
+           System.out.print( balanceSheet.getUserBalances(x) );
+           System.out.println("");
+        }
     }
 }

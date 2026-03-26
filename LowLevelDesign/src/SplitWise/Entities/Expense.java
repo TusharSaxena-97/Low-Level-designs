@@ -9,12 +9,22 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class Expense {
     private volatile static AtomicInteger nextId = new AtomicInteger(0);
     private int expenseId;
+    private double Amount;
     private String description;
     private String name;
     private User paidBy;
     private List<User> splitAmong;
     private SplitStrategy splitStrategy;
     private List<Split> splits;
+
+    public Group getGroup() {
+        return group;
+    }
+
+    public void setGroup(Group group) {
+        this.group = group;
+    }
+
     private Group group;
 
     public Expense(ExpenseBuilder eb)
@@ -25,12 +35,10 @@ public class Expense {
         this.splitAmong = eb.splitAmong;
         this.paidBy = eb.paidBy;
         this.splitStrategy = eb.splitStrategy;
+        this.Amount = eb.Amount;
+        this.splits = eb.splits;
 
         this.expenseId = nextId.getAndIncrement();
-    }
-
-    public Group getGroupId() {
-        return group;
     }
 
     public int getExpenseId() {
@@ -93,6 +101,27 @@ public class Expense {
 
     public void setGroupId(Group group) {
         this.group = group;
+    }
+
+
+    public double getAmount() {
+        return Amount;
+    }
+
+    public void setAmount(double amount) {
+        Amount = amount;
+    }
+
+    @Override
+    public String toString()
+    {
+        StringBuilder sb = new StringBuilder();
+        sb.append(paidBy.name).append(" Paid Rs. => ").append(Amount).append(" Split among ")
+                .append( splitAmong.stream().map( User::getName )
+                        .reduce( ( a,b ) -> a + " , " + b  )
+                        .get());
+
+        return sb.toString();
     }
 }
 

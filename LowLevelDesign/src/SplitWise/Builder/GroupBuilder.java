@@ -5,14 +5,16 @@ import SplitWise.Entities.Expense;
 import SplitWise.Entities.Group;
 import SplitWise.Entities.User;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class GroupBuilder {
     public int groupId;
+    public String Name;
     public String description;
     public String image;
-    public List<User> members;
-    public List<Expense> expenseList;
+    public List<User> members = new ArrayList<>();
+    public List<Expense> expenseList = new ArrayList<>();
     public BalanceSheet balanceSheet;
 
     public GroupBuilder AddDescription(String desc)
@@ -42,6 +44,12 @@ public class GroupBuilder {
     public GroupBuilder AddBalanceSheet( BalanceSheet balanceSheet )
     {
         this.balanceSheet = balanceSheet;
+        return this;
+    }
+
+    public GroupBuilder AddName( String Name )
+    {
+        this.Name = Name;
         return this;
     }
 

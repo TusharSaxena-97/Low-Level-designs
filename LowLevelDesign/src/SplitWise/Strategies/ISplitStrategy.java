@@ -7,5 +7,5 @@ import SplitWise.Entities.User;
 import java.util.*;
 
 public interface ISplitStrategy {
-    public abstract List<Split> createSplit(User paidBy, Double amount , List<User> splitAmong , SplitStrategy strategy );
+    public abstract List<Split> createSplit(User paidBy, Double amount , List<User> splitAmong , SplitStrategy strategy , Map<User,Double> percentges);
 }

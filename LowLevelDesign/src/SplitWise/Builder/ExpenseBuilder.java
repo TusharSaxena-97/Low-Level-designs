@@ -2,12 +2,15 @@ package SplitWise.Builder;
 
 import SplitWise.Entities.Expense;
 import SplitWise.Entities.Group;
+import SplitWise.Entities.Split;
 import SplitWise.Entities.User;
+import SplitWise.Factories.SplitFactory;
 import SplitWise.Strategies.ISplitStrategy;
 import SplitWise.Strategies.SplitStrategy;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class ExpenseBuilder {
 
@@ -18,6 +21,15 @@ public class ExpenseBuilder {
     public List<User> splitAmong = new ArrayList<>();
     public SplitStrategy splitStrategy;
     public Group group;
+    public double Amount;
+    public List<Split> splits;
+    public  Map<User, Double> percentages;
+
+    public ExpenseBuilder AddAmount(double Amount)
+    {
+        this.Amount = Amount;
+        return this;
+    }
 
     public ExpenseBuilder AddDescription( String desc)
     {
@@ -43,6 +55,12 @@ public class ExpenseBuilder {
         return this;
     }
 
+    public ExpenseBuilder AddSplitAmongList(List<User> users)
+    {
+        this.splitAmong = users;
+        return this;
+    }
+
     public ExpenseBuilder AddSplitStrategy(SplitStrategy strategy )
     {
         this.splitStrategy = strategy;
@@ -55,8 +73,15 @@ public class ExpenseBuilder {
         return this;
     }
 
+    public ExpenseBuilder AddPercentageSplits(Map<User, Double> percentages)
+    {
+        this.percentages = percentages;
+        return this;
+    }
+
     public Expense build( )
     {
+        this.splits = SplitFactory.createSplit( this.paidBy , this.Amount , this.splitAmong ,  this.splitStrategy, this.percentages );
         return new Expense( this );
     }
 }

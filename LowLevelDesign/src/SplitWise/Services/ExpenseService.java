@@ -11,9 +11,15 @@ public class ExpenseService {
     private GroupService groupService;
     private ExpenseRepository expenseRepository;
     private ExpenseBuilder expenseBuilder;
-    public synchronized void AddExpense( Expense expense )
+
+    public ExpenseService(GroupService groupService, ExpenseRepository expenseRepo) {
+        this.expenseRepository = expenseRepo;
+        this.groupService = groupService;
+    }
+
+    public synchronized Expense AddExpense( Expense expense )
     {
-        expenseRepository.AddExpense( expense );
+        return expenseRepository.AddExpense( expense );
     }
 
     public synchronized void EditExpense( int expenseId, Expense newExpense )

@@ -4,6 +4,8 @@ import Logger.LoggerService.LoggerService;
 import SplitWise.Entities.Split;
 import SplitWise.Entities.User;
 import SplitWise.Strategies.ISplitStrategy;
+import SplitWise.Strategies.SplitByPercentage;
+import SplitWise.Strategies.SplitEqual;
 import SplitWise.Strategies.SplitStrategy;
 
 import java.util.*;
@@ -11,32 +13,19 @@ import java.util.*;
 public class SplitFactory {
     public Split createSplit()
     {
-        return new Split( new User() , 12.23D);
+        return new Split( new User("","","") , 12.23D);
     }
 
-    public List<Split> createSplit( double Amount , List<User> splitAmong , User paidBy, SplitStrategy splitStrategy )
+    public static List<Split> createSplit(  User paidBy, double Amount , List<User> splitAmong , SplitStrategy splitStrategy , Map<User,Double> percentages)
     {
-        List<Split> splits = new ArrayList<>();
-
-        for( User x : splitAmong ){
-            if( x.equals(paidBy) )
-                splits.add( new Split(x , Amount ));
-            else
-              splits.add( new Split( x , 0 ));
-        }
-
-        double perPerson = Amount / splitAmong.size();
-
         if( splitStrategy.equals(SplitStrategy.equal))
         {
-            for( Split s : splits )
-                s.setAmount( s.getAmount() - perPerson );
+            return ( new SplitEqual( ) ).createSplit( paidBy , Amount , splitAmong , splitStrategy , percentages );
         }
-        else{
-            LoggerService.getinstance("").Error("This Split Strategy is not yet supported");
-            return null;
+        else if(splitStrategy.equals(SplitStrategy.percentage)){
+            return ( new SplitByPercentage()).createSplit( paidBy , Amount , splitAmong , splitStrategy , percentages );
         }
 
-        return splits;
+        return new ArrayList<Split>();
     }
 }

@@ -10,9 +10,10 @@ import java.util.stream.Collectors;
 public class ExpenseRepository {
     List<Expense> expenses = new ArrayList<>();
 
-    public void AddExpense(Expense expense)
+    public Expense AddExpense(Expense expense)
     {
        expenses.add( expense );
+       return expense;
     }
 
     public List<Expense> getByGroupId( Group group )
